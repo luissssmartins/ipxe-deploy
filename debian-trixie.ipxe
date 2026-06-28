@@ -1,0 +1,12 @@
+#!ipxe
+ifopen net{{ INTERFACE_ID }}
+set net{{ INTERFACE_ID }}/ip {{ PUBLIC_IP }}
+set net{{ INTERFACE_ID }}/netmask {{ NETMASK }}
+set net{{ INTERFACE_ID }}/gateway {{ PUBLIC_GW }}
+set net{{ INTERFACE_ID }}/dns 8.8.8.8
+
+set dir http://deb.debian.org/debian/dists/trixie/main/installer-amd64/current/images/netboot/debian-installer/amd64
+
+kernel ${dir}/linux auto=true priority=critical mirror/suite=trixie netcfg/disable_autoconfig=true netcfg/get_ipaddress={{ PUBLIC_IP }} netcfg/get_netmask={{ NETMASK }} netcfg/get_gateway={{ PUBLIC_GW }} netcfg/get_nameservers=8.8.8.8 netcfg/confirm_static=true netcfg/choose_interface=eth{{ INTERFACE_ID }} preseed/url=https://raw.githubusercontent.com/luissssmartins/ipxe-deploy/main/preseed.cfg initrd=initrd.gz -- quiet
+initrd ${dir}/initrd.gz
+boot
